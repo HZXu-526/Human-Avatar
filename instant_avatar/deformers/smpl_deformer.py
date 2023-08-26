@@ -1,65 +1,8 @@
 from third_parties.pytorch3d import ops
-from .smplx import SMPL,SMPLH
-from smplx.utils import Struct
+from .smplx import SMPL
 import torch
 import hydra
-import numpy as np
 
-vertex_ids = {
-    'smplh': {
-        'nose':		    332,
-        'reye':		    6260,
-        'leye':		    2800,
-        'rear':		    4071,
-        'lear':		    583,
-        'rthumb':		6191,
-        'rindex':		5782,
-        'rmiddle':		5905,
-        'rring':		6016,
-        'rpinky':		6133,
-        'lthumb':		2746,
-        'lindex':		2319,
-        'lmiddle':		2445,
-        'lring':		2556,
-        'lpinky':		2673,
-        'LBigToe':		3216,
-        'LSmallToe':	3226,
-        'LHeel':		3387,
-        'RBigToe':		6617,
-        'RSmallToe':    6624,
-        'RHeel':		6787
-    },
-    'smplx': {
-        'nose':		    9120,
-        'reye':		    9929,
-        'leye':		    9448,
-        'rear':		    616,
-        'lear':		    6,
-        'rthumb':		8079,
-        'rindex':		7669,
-        'rmiddle':		7794,
-        'rring':		7905,
-        'rpinky':		8022,
-        'lthumb':		5361,
-        'lindex':		4933,
-        'lmiddle':		5058,
-        'lring':		5169,
-        'lpinky':		5286,
-        'LBigToe':		5770,
-        'LSmallToe':    5780,
-        'LHeel':		8846,
-        'RBigToe':		8463,
-        'RSmallToe': 	8474,
-        'RHeel':  		8635
-    },
-    'mano': {
-            'thumb':		744,
-            'index':		320,
-            'middle':		443,
-            'ring':		    554,
-            'pinky':		671,
-        }
-}
 
 def get_bbox_from_smpl(vs, factor=1.2):
     assert vs.shape[0] == 1
@@ -77,60 +20,23 @@ def get_bbox_from_smpl(vs, factor=1.2):
 class SMPLDeformer():
     def __init__(self, model_path, gender, threshold=0.05, k=1) -> None:
         model_path = hydra.utils.to_absolute_path(model_path)
-
-        bm_path = "/home/wjx/Desktop/money/InstantAvatar/data/SMPLX/smpl/neutral/model.npz"
-        data_struct = None
-        if '.npz' in bm_path:
-            # smplx does not support .npz by default, so have to load in manually
-            smpl_dict = np.load(bm_path, encoding='latin1')
-            data_struct = Struct(**smpl_dict)
-            # print(smpl_dict.files)
-            data_struct.hands_componentsl = np.zeros((0))
-            data_struct.hands_componentsr = np.zeros((0))
-            data_struct.hands_meanl = np.zeros((15 * 3))
-            data_struct.hands_meanr = np.zeros((15 * 3))
-            V, D, B = data_struct.shapedirs.shape
-            data_struct.shapedirs = np.concatenate([data_struct.shapedirs, np.zeros((V, D, SMPL.SHAPE_SPACE_DIM - B))],
-                                                   axis=-1)  # super hacky way to let smplh use 16-size beta
-            kwargs = {
-                'model_type': 'smplh',
-                'data_struct': data_struct,
-                'num_betas': 16,
-                'batch_size': 1,
-                'num_expression_coeffs': 10,
-                'vertex_ids': vertex_ids['smplh'],
-                'use_pca': False,
-                'flat_hand_mean': True
-            }
-
-        self.body_model = SMPLH(bm_path, **kwargs)
+        self.body_model = SMPL(model_path, gender=gender)
 
         self.k = k
         self.threshold = threshold
         self.strategy = "nearest_neighbor"
 
         # define template canonical pose
-        #   T-pose does't work very well for some cases (legs are too close) 
+        #   T-pose does't work very well for some cases (legs are too close)
         self.initialized = False
 
     def initialize(self, betas, device):
         # convert to canonical space: deformed => T pose => Template pose
         batch_size = betas.shape[0]
-        #print(batch_size,betas.shape)
-        body_pose_t = torch.zeros((batch_size, 63), device=device)
+        body_pose_t = torch.zeros((batch_size, 69), device=device)
         body_pose_t[:, 2] = torch.pi / 6
         body_pose_t[:, 5] = -torch.pi / 6
-
-
-
-        smpl_outputs = self.body_model(left_hand_pose=None,
-                                 right_hand_pose=None,
-                                 jaw_pose=None,
-                                 leye_pose=None,
-                                 reye_pose=None,
-                                 return_full_pose=True,
-                                 expression=None,
-                                 betas=betas, body_pose=body_pose_t)
+        smpl_outputs = self.body_model(betas=betas, body_pose=body_pose_t)
         self.bbox = get_bbox_from_smpl(smpl_outputs.vertices[0:1].detach())
 
         self.T_template = smpl_outputs.T
@@ -153,14 +59,7 @@ class SMPLDeformer():
             # TODO: we have to intialized it every time because betas might change
             # self.initialized = True
 
-        smpl_outputs = self.body_model(left_hand_pose=None,
-                                        right_hand_pose=None,
-                                        jaw_pose=None,
-                                        leye_pose=None,
-                                        reye_pose=None,
-                                        return_full_pose=True,
-                                        expression=None,
-                                       betas=smpl_params["betas"],
+        smpl_outputs = self.body_model(betas=smpl_params["betas"],
                                        body_pose=smpl_params["body_pose"],
                                        global_orient=smpl_params["global_orient"],
                                        transl=smpl_params["transl"])
@@ -193,7 +92,7 @@ class SMPLDeformer():
         # find nearest neighbors
         pts = pts.reshape(batch_size, -1, 3)
         with torch.no_grad():
-            dist_sq, idx,_ = ops.knn_points(pts.float(), self.vertices.float(), K=self.k)
+            dist_sq, idx, _ = ops.knn_points(pts.float(), self.vertices.float(), K=self.k)
 
         # if valid => return the transformed points
         valid = dist_sq < self.threshold ** 2

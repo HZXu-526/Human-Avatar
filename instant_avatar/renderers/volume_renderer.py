@@ -12,7 +12,7 @@ def stratified_sampling(near, far, N):
     Returns
         samples (batch_size, sample_size, N)
     """
-    splits = torch.linspace(0, 1, N+1, device=near.device)
+    splits = torch.linspace(0, 1, N + 1, device=near.device)
     end_pts = (far - near)[..., None] * splits + near[..., None]
     width = end_pts[..., 1:] - end_pts[..., :-1]
     samples = torch.rand_like(width) * width + end_pts[..., :-1]
@@ -40,7 +40,7 @@ def importance_sampling(bins, weights, N):
 
     # sample within each bins
     bins_l = torch.gather(bins, dim=-1, index=idx)
-    bins_r = torch.gather(bins, dim=-1, index=idx+1)
+    bins_r = torch.gather(bins, dim=-1, index=idx + 1)
     samples = bins_l + (bins_r - bins_l) * torch.rand_like(u)
     samples, _ = samples.sort(dim=-1)
     return samples
@@ -48,7 +48,7 @@ def importance_sampling(bins, weights, N):
 
 def volume_render(network_fn, rays_o, rays_d, z_vals):
     """volume render
-    
+
     Args:
         rays_o: (batch_size, ray_num, 3)
         rays_d: (batch_size, ray_num, 3)
@@ -68,7 +68,7 @@ def volume_render(network_fn, rays_o, rays_d, z_vals):
     # 0 (transparent) <= alpha <= 1 (opaque)
     alpha = 1 - torch.exp(-sigma_vals * dists)
     cumprod = torch.cat([torch.ones_like(alpha[..., 0:1]),
-                        torch.cumprod(1 - alpha[..., :-1] + 1e-10, dim=-1)], dim=-1)
+                         torch.cumprod(1 - alpha[..., :-1] + 1e-10, dim=-1)], dim=-1)
 
     # sum(weights) = 1 - torch.prod(1 - alpha) <= 1
     weights = alpha * cumprod
@@ -110,7 +110,7 @@ class VolumeRenderer:
     @torch.no_grad()
     def render_test(self, rays, model):
         num_rays = rays.o.shape[1]
-        output = {} 
+        output = {}
 
         K = 1024
         for i in range(0, num_rays, K):
@@ -134,4 +134,3 @@ class VolumeRenderer:
             return self.render_test(rays, model)
         else:
             return self.render_train(rays, model)
-            

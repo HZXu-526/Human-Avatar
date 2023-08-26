@@ -14,6 +14,7 @@ def get_ray_directions(H, W):
     xy = np.stack([x, y, np.ones_like(x)], axis=-1)
     return xy
 
+
 def make_rays(K, c2w, H, W):
     xy = get_ray_directions(H, W).reshape(-1, 3).astype(np.float32)
     d_c = xy @ np.linalg.inv(K).T
@@ -24,17 +25,19 @@ def make_rays(K, c2w, H, W):
     d_w = d_w.reshape(H, W, 3)
     return o_w.astype(np.float32), d_w.astype(np.float32)
 
+
 def load_smpl_param(path):
     smpl_params = dict(np.load(str(path)))
     if "thetas" in smpl_params:
         smpl_params["body_pose"] = smpl_params["thetas"][..., 3:]
         smpl_params["global_orient"] = smpl_params["thetas"][..., :3]
     return {
-        "betas": smpl_params["betas"].astype(np.float32),
+        "betas": smpl_params["betas"].astype(np.float32).reshape(1, 10),
         "body_pose": smpl_params["body_pose"].astype(np.float32),
         "global_orient": smpl_params["global_orient"].astype(np.float32),
         "transl": smpl_params["transl"].astype(np.float32),
     }
+
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, root, subject, split, opt):
@@ -63,7 +66,7 @@ class CustomDataset(torch.utils.data.Dataset):
             cached_path = root / f"poses/{split}.npz"
         else:
             cached_path = None
-        
+
         if opt.get("fitting", False):
             # for fitting, optimize SMPL from scratch
             cached_path = None
@@ -98,8 +101,8 @@ class CustomDataset(torch.utils.data.Dataset):
         img = cv2.imread(self.img_lists[idx])
         msk = cv2.imread(self.msk_lists[idx], cv2.IMREAD_GRAYSCALE) / 255
         if self.downscale > 1:
-            img = cv2.resize(img, dsize=None, fx=1/self.downscale, fy=1/self.downscale)
-            msk = cv2.resize(msk, dsize=None, fx=1/self.downscale, fy=1/self.downscale)
+            img = cv2.resize(img, dsize=None, fx=1 / self.downscale, fy=1 / self.downscale)
+            msk = cv2.resize(msk, dsize=None, fx=1 / self.downscale, fy=1 / self.downscale)
 
         img = (img[..., :3] / 255).astype(np.float32)
         msk = msk.astype(np.float32)
@@ -110,10 +113,10 @@ class CustomDataset(torch.utils.data.Dataset):
         else:
             bg_color = np.ones_like(img).astype(np.float32)
             img = img * msk[..., None] + (1 - msk[..., None])
-            
+
         if self.split == "train":
             (msk, img, rays_o, rays_d, bg_color) = \
-                    self.sampler.sample(msk, img, self.rays_o, self.rays_d, bg_color) 
+                self.sampler.sample(msk, img, self.rays_o, self.rays_d, bg_color)
         else:
             rays_o = self.rays_o.reshape(-1, 3)
             rays_d = self.rays_d.reshape(-1, 3)

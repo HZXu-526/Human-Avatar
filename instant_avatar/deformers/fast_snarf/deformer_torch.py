@@ -232,8 +232,7 @@ def query_weights_smpl(x, smpl_verts, smpl_weights, resolution=128):
     ws = ws / ws.sum(-1, keepdim=True)
     weights = (ws[..., None] * weights).sum(-2)
 
-    b, c, d, h, w = 1, 52, resolution // 4, resolution, resolution
-    #print(weights.shape) #[1,524288,52]
+    b, c, d, h, w = 1, 24, resolution // 4, resolution, resolution
     weights = weights.permute(0, 2, 1).reshape(b, c, d, h, w)
     for _ in range(30):
         mean=(weights[:,:,2:,1:-1,1:-1]+weights[:,:,:-2,1:-1,1:-1]+\

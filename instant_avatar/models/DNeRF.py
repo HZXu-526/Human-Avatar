@@ -24,7 +24,8 @@ class DNeRFModel(pl.LightningModule):
             self.SMPL_param = SMPLParamEmbedding(**datamodule.trainset.get_SMPL_params())
         self.deformer = hydra.utils.instantiate(opt.deformer)
         self.loss_fn = hydra.utils.instantiate(opt.loss)
-        self.renderer = hydra.utils.instantiate(opt.renderer)
+        self.renderer = hydra.utils.instantiate(opt.renderer, smpl_init=opt.get("smpl_init", False))
+        self.renderer.initialize(len(datamodule.trainset))
         self.datamodule = datamodule
         self.opt = opt
 
@@ -96,11 +97,12 @@ class DNeRFModel(pl.LightningModule):
         return rgb, depth, alpha, counter
 
     def update_density_grid(self):
-        if self.global_step % 16 == 0 and hasattr(self.renderer, "density_grid_train"):
-            _, density, valid = self.renderer.density_grid_train.update(self.deformer,
-                                                                        self.net_coarse,
-                                                                        self.global_step)
-            reg = 20 * density[~valid].mean()
+        N = 1 if self.opt.get("smpl_init", False) else 20
+        if self.global_step % N == 0 and hasattr(self.renderer, "density_grid_train"):
+            density, valid = self.renderer.density_grid_train.update(self.deformer,
+                                                                     self.net_coarse,
+                                                                     self.global_step)
+            reg = N * density[~valid].mean()
             if self.global_step < 500:
                 reg += 0.5 * density.mean()
             return reg
@@ -125,6 +127,7 @@ class DNeRFModel(pl.LightningModule):
             batch["near"][:] = dist - 1
             batch["far"][:] = dist + 1
 
+        self.renderer.idx = int(batch["idx"][0])
         self.deformer.prepare_deformer(batch)
         reg = self.update_density_grid()
         if isinstance(self.net_coarse, NeRFNGPNet):
@@ -206,6 +209,10 @@ class DNeRFModel(pl.LightningModule):
             batch["body_pose"][:] = 0
             batch["body_pose"][:, 2] = 0.5
             batch["body_pose"][:, 5] = -0.5
+            # da pose
+            # batch["body_pose"][:] = 0
+            # batch["body_pose"][:, 5] = 1
+            # batch["body_pose"][:, 8] = -1
 
             dist = torch.sqrt(torch.square(batch["transl"]).sum(-1))
             batch["near"] = torch.ones_like(batch["rays_d"][..., 0]) * (dist - 1)
@@ -213,7 +220,7 @@ class DNeRFModel(pl.LightningModule):
 
             rgb_cano, *_ = self.render_image_fast(batch, img_size)
             img = torch.cat([rgb_gt, rgb, rgb_cano], dim=0)
-            self.logger.experiment.add_images(f"val/cano_pose", 
+            self.logger.experiment.add_images(f"val/cano_pose",
                                               img[..., [2, 1, 0]],
                                               global_step=self.global_step,
                                               dataformats="NHWC")
