@@ -1,0 +1,3 @@
+- dataset=neuman/citron
+- experiment=baseline
+- deformer.opt.cano_pose=da_pose

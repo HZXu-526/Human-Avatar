@@ -1,0 +1,3 @@
+- dataset=neuman/parking_lot
+- experiment=baseline
+- deformer.opt.cano_pose=da_pose
