@@ -6,6 +6,13 @@ We combine the HuMoR and InstantAvatar to get a higher performance in human neur
 There you can see some of our model's adventage: 
 ![output](https://github.com/HZXu-526/HuMoR-Avatar/assets/82307443/2f717ff4-9fdc-423c-b9c5-d63ff4999e87)
 from left to right is OriginalVideo,ROMP,Ours(HuMoR)
+
+And the rendered result:(Ours(left),InstantAvatar(right))
+<p float="left"> 
+<img src="./media/neuman/our_lab.gif" width="270" height="270">
+<img src="./media/neuman/org_lab.gif" width="270" height="270">
+</p>
+
 ## How to use 
 NOTE: the use process is similar to instant-avatar,we modified the SMPL model from ROMP to HuMoR. \
 So you should install both instant-avatar and HuMoR \
