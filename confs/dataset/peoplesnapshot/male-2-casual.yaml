@@ -14,8 +14,9 @@ opt:
     downscale: 2
     sampler: ${sampler}
     fitting: ${model.opt.optimize_SMPL.enable}
+    refine: ${model.opt.optimize_SMPL.is_refine}
   val:
-    num_workers: 0
+    num_workers: 8
     batch_size: 1
     start: 455
     end: 455

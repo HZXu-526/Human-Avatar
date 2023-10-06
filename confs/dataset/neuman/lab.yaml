@@ -9,7 +9,7 @@ opt:
     num_workers: 8
     batch_size: 1
     start: 0
-    end: 413
+    end: 80
     skip: 1
     downscale: 1
     sampler: ${sampler}
@@ -18,14 +18,14 @@ opt:
   val:
     num_workers: 4
     batch_size: 1
-    start: 412
-    end: 413
+    start: 52
+    end: 53
     skip: 4
     downscale: 1
   test:
     num_workers: 4
     batch_size: 1
-    start: 412
-    end: 413
-    skip: 4
+    start: 81
+    end: 104
+    skip: 1
     downscale: 1

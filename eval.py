@@ -13,6 +13,7 @@ from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 
 class Evaluator(nn.Module):
     """adapted from https://github.com/JanaldoChen/Anim-NeRF/blob/main/models/evaluator.py"""
+    #modified to support neuman data
     def __init__(self):
         super().__init__()
         self.lpips = LearnedPerceptualImagePatchSimilarity(net_type="alex")

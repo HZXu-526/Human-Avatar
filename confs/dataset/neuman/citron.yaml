@@ -1,6 +1,6 @@
 _target_: instant_avatar.datasets.custom.CustomDataModule
 name: neuman
-subject: seattle
+subject: citron
 gender: neutral
 opt:
   dataroot: ./data/custom/${dataset.subject}/
@@ -9,7 +9,7 @@ opt:
     num_workers: 8
     batch_size: 1
     start: 0
-    end: 403
+    end: 101
     skip: 1
     downscale: 1
     sampler: ${sampler}
@@ -18,14 +18,14 @@ opt:
   val:
     num_workers: 4
     batch_size: 1
-    start: 40
-    end: 41
+    start: 58
+    end: 59
     skip: 4
     downscale: 1
   test:
     num_workers: 4
     batch_size: 1
-    start: 40
-    end: 41
+    start: 58
+    end: 59
     skip: 4
     downscale: 1

@@ -1,6 +1,8 @@
+seattle:
+  yaml:
 _target_: instant_avatar.datasets.custom.CustomDataModule
 name: neuman
-subject: seattle
+subject: parking_lot
 gender: neutral
 opt:
   dataroot: ./data/custom/${dataset.subject}/
@@ -9,7 +11,7 @@ opt:
     num_workers: 8
     batch_size: 1
     start: 0
-    end: 403
+    end: 402
     skip: 1
     downscale: 1
     sampler: ${sampler}
