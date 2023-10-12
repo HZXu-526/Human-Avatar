@@ -43,7 +43,7 @@ To use HuMoR result,you need the extra process:
 2. run the script in `data/` , use `convert_humor_data2avatar.py` to process the frames like `python convert_humor_data2avatar.py input_directory output_directory
 `
 3. run the script in `data/` , use `combine_smpl_file.py` to process the SMPL result like`python script.py --rate 1 PATHTO/humor_results.npz PATHTO/romp_poses.npz poses.npz
-`. \ 
+`. 
 4. (Optional)If you want to use less frames to train the avatar,you can modify the param rate,and use `python cut_frames.py --rate 2 --data_dir  --output_dir 
 `to process images. Ensure both of the 'rate' params are the same.
 
