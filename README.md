@@ -30,7 +30,8 @@ Follow upper repo and their installation guidance.
 
 ## Quick Start
 Quickly learn and animate an avatar with `bash ./bash/run-demo.sh` \
-Please make sure you get all the files in both repo.
+Please make sure you get all the files in both repo. \
+
 ![rotation](https://github.com/HZXu-526/Human-Avatar/assets/82307443/cf58c5b3-fe42-4a7e-9f86-e4ada6eb85ad)
 
 
