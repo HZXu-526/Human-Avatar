@@ -6,6 +6,12 @@ We combine the HuMoR and InstantAvatar to get a higher performance in human neur
 There you can see some of our model's adventage: 
 ![output](https://github.com/HZXu-526/HuMoR-Avatar/assets/82307443/2f717ff4-9fdc-423c-b9c5-d63ff4999e87)
 from left to right is OriginalVideo,ROMP,Ours(HuMoR)
+![_cgi-bin_mmwebwx-bin_webwxgetmsgimg  MsgID=8194712668490222633 skey=@crypt_190ff77b_802911f810a2a700e5d0579401715c8b mmweb_appid=wx_webfilehelper](https://github.com/HZXu-526/Human-Avatar/assets/82307443/fdb07729-7ece-40a6-9b58-10c9d7651c97)
+
+![_cgi-bin_mmwebwx-bin_webwxgetmsgimg  MsgID=1025857888429886630 skey=@crypt_190ff77b_802911f810a2a700e5d0579401715c8b mmweb_appid=wx_webfilehelper](https://github.com/HZXu-526/Human-Avatar/assets/82307443/d0af6681-a7b8-409f-ac28-c0067cdffd28)
+
+![_cgi-bin_mmwebwx-bin_webwxgetmsgimg  MsgID=8240355713215810546 skey=@crypt_190ff77b_802911f810a2a700e5d0579401715c8b mmweb_appid=wx_webfilehelper](https://github.com/HZXu-526/Human-Avatar/assets/82307443/9a86ed3f-63bc-46bd-9d69-99fb09856822)
+
 
 And the rendered result:(Ours(left),InstantAvatar(right))
 <p float="left"> 
@@ -24,7 +30,11 @@ Follow upper repo and their installation guidance.
 
 ## Quick Start
 Quickly learn and animate an avatar with `bash ./bash/run-demo.sh` \
-Please make sure you get all the files in both repo.
+Please make sure you get all the files in both repo. \
+
+![rotation](https://github.com/HZXu-526/Human-Avatar/assets/82307443/cf58c5b3-fe42-4a7e-9f86-e4ada6eb85ad)
+
+
 
 ## Play with Your Own Video
 Here we use the in the wild video provided by [Neuman](https://github.com/apple/ml-neuman) as an example:
