@@ -59,6 +59,16 @@ To use HuMoR result,you need the extra process:
 
 5. run the bash script `bash ./bash/run-neuman-demo.sh`
 
+<p float="left"> 
+<img src="./media/neuman/1.gif" width="270" height="270">
+<img src="./media/neuman/2.gif" width="270" height="270">
+</p>
+
+<p float="left"> 
+<img src="./media/neuman/3.gif" width="270" height="270">
+<img src="./media/neuman/4.gif" width="270" height="270">
+</p>
+
 ## About the yaml file
 Let's use thr same neuman example:
 ```
