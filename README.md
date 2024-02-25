@@ -66,8 +66,9 @@ To use HuMoR result,you need the extra process:
 <img src="./media/neuman/3.gif" width="270" height="270">
 <img src="./media/neuman/4.gif" width="270" height="270">
 </p>
+
 ## About the yaml file
-Let's use thr same neuman example:
+Let's use the same neuman example:
 ```
 _target_: instant_avatar.datasets.custom.CustomDataModule
 name: neuman # dataset_name
