@@ -125,17 +125,13 @@ We are grateful to the developers and contributors of these repositories for the
 
 ## Citation
 ```
-@article{jiang2022instantavatar,
-  author    = {Jiang, Tianjian and Chen, Xu and Song, Jie and Hilliges, Otmar},
-  title     = {InstantAvatar: Learning Avatars from Monocular Video in 60 Seconds},
-  journal   = {arXiv},
-  year      = {2022},
-}
-@inproceedings{rempe2021humor,
-    author={Rempe, Davis and Birdal, Tolga and Hertzmann, Aaron and Yang, Jimei and Sridhar, Srinath and Guibas, Leonidas J.},
-    title={HuMoR: 3D Human Motion Model for Robust Pose Estimation},
-    booktitle={International Conference on Computer Vision (ICCV)},
-    year={2021}
+@article{huang2024efficient,
+  title={Efficient neural implicit representation for 3D human reconstruction},
+  author={Huang, Zexu and Erfani, Sarah Monazam and Lu, Siying and Gong, Mingming},
+  journal={Pattern Recognition},
+  pages={110758},
+  year={2024},
+  publisher={Elsevier}
 }
 ```
 ## Question
